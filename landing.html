@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hosted Visions - Web Solutions That Elevate Your Online Presence</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandDark: '#0b221d',
+                        brandHero: '#0f2e27',
+                        brandLight: '#eef5f0',
+                        brandCardBg: '#e2ede7',
+                        brandAccent: '#4d856d',
+                        brandAccentHover: '#396954',
+                        brandSage: '#a3c7b6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+        }
+        .glass-dark {
+            background: rgba(15, 46, 39, 0.85);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-brandLight text-slate-900 antialiased selection:bg-brandSage selection:text-brandDark">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 bg-brandDark text-white px-6 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3 border border-brandSage/30">
+        <i class="fa-solid fa-circle-check text-brandSage text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Action completed successfully!</span>
+    </div>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="fixed inset-0 z-50 bg-brandDark/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-brandHero border border-brandSage/30 w-full max-w-xl rounded-3xl p-6 shadow-2xl text-white relative">
+            <button onclick="toggleSearch()" class="absolute top-5 right-5 text-brandSage/70 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold mb-4 text-white flex items-center">
+                <i class="fa-solid fa-magnifying-glass mr-2 text-brandSage"></i> Search Hosted Visions
+            </h3>
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="Search services, hosting plans, case studies..." class="w-full bg-brandDark/90 border border-brandSage/40 rounded-2xl py-3 px-4 pl-12 text-white placeholder-brandSage/50 focus:outline-none focus:border-brandSage transition">
+                <i class="fa-solid fa-search absolute left-4 top-4 text-brandSage"></i>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <span class="text-xs bg-brandDark/80 text-brandSage border border-brandSage/20 px-3 py-1.5 rounded-xl cursor-pointer hover:bg-brandSage hover:text-brandDark transition" onclick="quickSearch('Content Creation')">Content Creation</span>
+                <span class="text-xs bg-brandDark/80 text-brandSage border border-brandSage/20 px-3 py-1.5 rounded-xl cursor-pointer hover:bg-brandSage hover:text-brandDark transition" onclick="quickSearch('Hosting Management')">Hosting Management</span>
+                <span class="text-xs bg-brandDark/80 text-brandSage border border-brandSage/20 px-3 py-1.5 rounded-xl cursor-pointer hover:bg-brandSage hover:text-brandDark transition" onclick="quickSearch('Pricing')">Pricing</span>
+                <span class="text-xs bg-brandDark/80 text-brandSage border border-brandSage/20 px-3 py-1.5 rounded-xl cursor-pointer hover:bg-brandSage hover:text-brandDark transition" onclick="quickSearch('Case Studies')">Case Studies</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Consultation Modal -->
+    <div id="consultation-modal" class="fixed inset-0 z-50 bg-brandDark/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-brandHero border border-brandSage/30 w-full max-w-md rounded-3xl p-6 shadow-2xl text-white relative">
+            <button onclick="toggleConsultation()" class="absolute top-5 right-5 text-brandSage/70 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold mb-2 text-white">Book a Consultation</h3>
+            <p class="text-xs text-brandSage mb-6">Schedule a 1-on-1 session with our lead architects to optimize your web strategy.</p>
+            <form onsubmit="handleConsultationSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-brandSage mb-1">Full Name</label>
+                    <input type="text" required class="w-full bg-brandDark/90 border border-brandSage/40 rounded-xl py-2.5 px-3 text-sm text-white placeholder-brandSage/40 focus:outline-none focus:border-brandSage" placeholder="John Doe">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brandSage mb-1">Email Address</label>
+                    <input type="email" required class="w-full bg-brandDark/90 border border-brandSage/40 rounded-xl py-2.5 px-3 text-sm text-white placeholder-brandSage/40 focus:outline-none focus:border-brandSage" placeholder="john@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-brandSage mb-1">Project Details</label>
+                    <textarea rows="3" class="w-full bg-brandDark/90 border border-brandSage/40 rounded-xl py-2.5 px-3 text-sm text-white placeholder-brandSage/40 focus:outline-none focus:border-brandSage" placeholder="Tell us about your project or hosting needs..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-brandSage hover:bg-white text-brandDark font-bold py-3 rounded-xl transition shadow-lg">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="bg-brandHero text-white sticky top-0 z-40 border-b border-brandSage/10 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center space-x-2 group">
+                <span class="text-2xl font-black tracking-wider text-white">Hosted Visions</span>
+            </a>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-brandSage">
+                <a href="#home" class="hover:text-white transition">Home</a>
+                <a href="#services" class="hover:text-white transition">Services</a>
+                <a href="#case-studies" class="hover:text-white transition">Case Studies</a>
+                <a href="#about" class="hover:text-white transition">About</a>
+                <a href="#pricing" class="hover:text-white transition">Pricing</a>
+            </nav>
+
+            <!-- Actions (Search & Mobile Menu Toggle) -->
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleSearch()" class="text-brandSage hover:text-white p-2 rounded-full hover:bg-brandDark/50 transition flex items-center space-x-2 text-sm">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span class="hidden sm:inline">Search</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-brandSage hover:text-white p-2 text-xl focus:outline-none">
+                    <i class="fa-solid fa-bars" id="menu-icon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brandDark border-t border-brandSage/20 px-6 py-4 space-y-3 shadow-inner">
+            <a href="#home" onclick="toggleMobileMenu()" class="block text-brandSage hover:text-white py-1 font-medium">Home</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block text-brandSage hover:text-white py-1 font-medium">Services</a>
+            <a href="#case-studies" onclick="toggleMobileMenu()" class="block text-brandSage hover:text-white py-1 font-medium">Case Studies</a>
+            <a href="#about" onclick="toggleMobileMenu()" class="block text-brandSage hover:text-white py-1 font-medium">About</a>
+            <a href="#pricing" onclick="toggleMobileMenu()" class="block text-brandSage hover:text-white py-1 font-medium">Pricing</a>
+            <button onclick="toggleMobileMenu(); toggleConsultation();" class="w-full mt-2 bg-brandSage text-brandDark font-bold py-2.5 rounded-xl">Book Consultation</button>
+        </div>
+    </header>
+
+    <!-- 1. HERO SECTION -->
+    <section id="home" class="bg-brandHero text-white pt-12 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <!-- Ambient BG Elements -->
+        <div class="absolute top-10 left-10 w-80 h-80 bg-brandSage/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-brandAccent/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <!-- Left Hero Content -->
+            <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+                <div class="inline-flex items-center space-x-2 bg-brandDark/60 border border-brandSage/30 px-3.5 py-1.5 rounded-full text-xs font-semibold text-brandSage">
+                    <span class="w-2 h-2 rounded-full bg-brandSage animate-pulse"></span>
+                    <span>Creative & Scalable Web Infrastructure</span>
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white">
+                    Web Solutions That Elevate Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-brandSage to-emerald-300">Online Presence</span>
+                </h1>
+                <p class="text-base sm:text-lg text-brandSage/90 max-w-xl mx-auto lg:mx-0 font-light leading-relaxed">
+                    We engineer high-performance digital solutions, seamless hosting infrastructure, and tailored media creation designed to accelerate modern business growth.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                    <a href="#services" class="w-full sm:w-auto bg-brandSage hover:bg-white text-brandDark font-extrabold px-8 py-4 rounded-2xl shadow-xl transition transform hover:-translate-y-0.5 text-center">
+                        Explore Services
+                    </a>
+                    <button onclick="toggleConsultation()" class="w-full sm:w-auto bg-brandDark/80 hover:bg-brandDark border border-brandSage/40 text-white font-bold px-8 py-4 rounded-2xl transition text-center">
+                        Book Consultation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Workspace Image Mockup -->
+            <div class="lg:col-span-6 relative">
+                <div class="relative rounded-3xl overflow-hidden border border-brandSage/30 shadow-2xl bg-brandDark p-3 group">
+                    <div class="absolute top-6 left-6 z-10 flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <!-- Direct display of pexels-pew-nguyen-13162091.jpg image -->
+                    <img src="pexels-pew-nguyen-13162091.jpg" alt="Hosted Visions Workspace" class="rounded-2xl w-full object-cover shadow-inner pt-4 h-[440px] transform group-hover:scale-[1.01] transition duration-500">
+                    
+                    <!-- Floating Overlay Card -->
+                    <div class="absolute bottom-6 left-6 right-6 glass-dark border border-brandSage/30 p-4 rounded-2xl shadow-2xl text-white flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-brandSage/20 flex items-center justify-center text-brandSage text-xl">
+                                <i class="fa-solid fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-white">Hosted Visions Infrastructure</p>
+                                <p class="text-[11px] text-brandSage">99.99% Uptime Guarantee • Managed Security</p>
+                            </div>
+                        </div>
+                        <span class="hidden sm:inline-block text-xs font-bold bg-brandSage/20 text-brandSage px-3 py-1 rounded-full border border-brandSage/30">Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. SERVICES SECTION -->
+    <section id="services" class="py-24 px-4 sm:px-6 lg:px-8 bg-brandLight">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-brandDark tracking-tight">Our Services</h2>
+                <p class="text-sm sm:text-base text-slate-600">End-to-end web management, development, and hosting services crafted for performance.</p>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1: Content Creation -->
+                <div class="bg-white border border-brandSage/30 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brandLight rounded-2xl flex items-center justify-center text-brandDark text-2xl mb-6 group-hover:bg-brandHero group-hover:text-brandSage transition-colors duration-300">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-brandDark mb-3">Content Creation</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Crafting high-converting web copy, media assets, and strategic content to engage and convert site visitors effectively.
+                    </p>
+                    <a href="#services" onclick="showToast('Content Creation Service details selected')" class="inline-flex items-center space-x-2 text-sm font-bold text-brandDark hover:text-brandAccent transition">
+                        <span>Read details</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 2: Hosting Management -->
+                <div class="bg-white border border-brandSage/30 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brandLight rounded-2xl flex items-center justify-center text-brandDark text-2xl mb-6 group-hover:bg-brandHero group-hover:text-brandSage transition-colors duration-300">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-brandDark mb-3">Hosting Management</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Fully managed, lightning-fast cloud servers with automated scaling, zero configuration hassle, and optimized DNS setup.
+                    </p>
+                    <a href="#services" onclick="showToast('Hosting Management details selected')" class="inline-flex items-center space-x-2 text-sm font-bold text-brandDark hover:text-brandAccent transition">
+                        <span>Read details</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 3: 24/7 Client Support -->
+                <div class="bg-white border border-brandSage/30 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brandLight rounded-2xl flex items-center justify-center text-brandDark text-2xl mb-6 group-hover:bg-brandHero group-hover:text-brandSage transition-colors duration-300">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-brandDark mb-3">24/7 Client Support</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Dedicated technical support staff available round the clock to keep your platforms operational, secure, and updated.
+                    </p>
+                    <a href="#services" onclick="showToast('24/7 Client Support details selected')" class="inline-flex items-center space-x-2 text-sm font-bold text-brandDark hover:text-brandAccent transition">
+                        <span>Read details</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 4: SEO Strategy -->
+                <div class="bg-white border border-brandSage/30 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brandLight rounded-2xl flex items-center justify-center text-brandDark text-2xl mb-6 group-hover:bg-brandHero group-hover:text-brandSage transition-colors duration-300">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-brandDark mb-3">SEO Strategy</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Comprehensive search engine optimization to boost keyword rankings, drive organic audience growth, and increase reach.
+                    </p>
+                    <a href="#services" onclick="showToast('SEO Strategy details selected')" class="inline-flex items-center space-x-2 text-sm font-bold text-brandDark hover:text-brandAccent transition">
+                        <span>Read details</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 5: Content Backups -->
+                <div class="bg-white border border-brandSage/30 p-8 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div class="w-14 h-14 bg-brandLight rounded-2xl flex items-center justify-center text-brandDark text-2xl mb-6 group-hover:bg-brandHero group-hover:text-brandSage transition-colors duration-300">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-brandDark mb-3">Content Backups</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                        Automated daily real-time data backups and rapid multi-region recovery protocols ensuring total peace of mind.
+                    </p>
+                    <a href="#services" onclick="showToast('Content Backups details selected')" class="inline-flex items-center space-x-2 text-sm font-bold text-brandDark hover:text-brandAccent transition">
+                        <span>Read details</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                </div>
+
+                <!-- Card 6: Custom Call to Action Card -->
+                <div class="bg-brandHero border border-brandDark p-8 rounded-3xl shadow-lg flex flex-col justify-between text-white">
+                    <div>
+                        <div class="w-14 h-14 bg-brandDark rounded-2xl flex items-center justify-center text-brandSage text-2xl mb-6">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Tailored Solutions</h3>
+                        <p class="text-sm text-brandSage/80 leading-relaxed mb-6">
+                            Need a custom enterprise architecture or high-volume hosting setup? Let's design it together.
+                        </p>
+                    </div>
+                    <button onclick="toggleConsultation()" class="w-full bg-brandSage hover:bg-white text-brandDark font-bold py-3.5 rounded-2xl transition shadow-md">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. CASE STUDIES SECTION -->
+    <section id="case-studies" class="py-24 px-4 sm:px-6 lg:px-8 bg-white border-y border-brandSage/20">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-brandDark tracking-tight">Case Studies</h2>
+                <p class="text-sm sm:text-base text-slate-600">Real performance results achieved for our global enterprise partners.</p>
+            </div>
+
+            <!-- Case Studies Display -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Case Visual Showcase -->
+                <div class="lg:col-span-8 bg-brandCardBg border border-brandSage/40 rounded-3xl p-6 sm:p-8 shadow-sm relative">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <div class="relative group rounded-2xl overflow-hidden shadow-sm">
+                            <img src="https://placehold.co/600x400/0f2e27/ffffff?text=E-Commerce+Platform" alt="Case Study Project 1" class="w-full h-52 object-cover">
+                            <div class="absolute inset-0 bg-brandDark/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="bg-white text-brandDark text-xs font-bold px-4 py-2 rounded-xl">View Case</span>
+                            </div>
+                        </div>
+                        <div class="relative group rounded-2xl overflow-hidden shadow-sm">
+                            <img src="https://placehold.co/600x400/183026/ffffff?text=SaaS+Infrastructure" alt="Case Study Project 2" class="w-full h-52 object-cover">
+                            <div class="absolute inset-0 bg-brandDark/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                <span class="bg-white text-brandDark text-xs font-bold px-4 py-2 rounded-xl">View Case</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Overlays -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                        <div class="bg-brandHero text-white p-5 rounded-2xl flex items-center space-x-4 border border-brandSage/20 shadow-md">
+                            <div class="w-12 h-12 rounded-xl bg-brandSage/20 flex items-center justify-center text-brandSage text-2xl font-black">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black text-white">35%</p>
+                                <p class="text-xs text-brandSage">Increase in Conversions</p>
+                            </div>
+                        </div>
+                        <div class="bg-brandHero text-white p-5 rounded-2xl flex items-center space-x-4 border border-brandSage/20 shadow-md">
+                            <div class="w-12 h-12 rounded-xl bg-brandSage/20 flex items-center justify-center text-brandSage text-2xl font-black">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-black text-white">33%</p>
+                                <p class="text-xs text-brandSage">Faster Load Time</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case Study Text Panel -->
+                <div class="lg:col-span-4 bg-brandHero text-white p-8 rounded-3xl shadow-xl space-y-6">
+                    <span class="inline-block bg-brandDark text-brandSage border border-brandSage/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Client Success
+                    </span>
+                    <h3 class="text-2xl font-bold leading-snug">Scaling Web Architecture with Zero Friction</h3>
+                    <p class="text-sm text-brandSage/80 leading-relaxed">
+                        We migrated legacy systems to modern cloud infrastructure, delivering instant loading speed improvements and boosting sales conversions seamlessly.
+                    </p>
+                    <div class="border-t border-brandSage/20 pt-4 space-y-2 text-xs text-brandSage">
+                        <p class="flex items-center"><i class="fa-solid fa-check text-brandSage mr-2"></i> 99.99% Guaranteed uptime</p>
+                        <p class="flex items-center"><i class="fa-solid fa-check text-brandSage mr-2"></i> Automated global CDN caching</p>
+                    </div>
+                    <button onclick="toggleConsultation()" class="w-full bg-brandSage hover:bg-white text-brandDark font-bold py-3.5 rounded-xl transition">
+                        Request Full Case Study
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. ABOUT SECTION -->
+    <section id="about" class="py-24 px-4 sm:px-6 lg:px-8 bg-brandLight">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <!-- Portrait Image Placeholder -->
+            <div class="lg:col-span-5 relative">
+                <div class="relative rounded-3xl overflow-hidden border border-brandSage/40 shadow-xl bg-white p-3">
+                    <img src="https://placehold.co/600x700/0f2e27/eef5f0?text=Leadership+Portrait" alt="Leadership Portrait" class="rounded-2xl w-full h-[460px] object-cover">
+                </div>
+            </div>
+
+            <!-- About Content -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="inline-flex items-center space-x-2 bg-white border border-brandSage/40 px-3.5 py-1.5 rounded-full text-xs font-bold text-brandDark shadow-sm">
+                    <span>About Hosted Visions</span>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-brandDark tracking-tight">
+                    Engineered to make web hosting & design effortless.
+                </h2>
+                <p class="text-base text-slate-700 leading-relaxed">
+                    At <strong>Hosted Visions</strong>, we empower businesses through robust cloud architectures, elegant UI design, and round-the-clock technical excellence. We believe that your digital platform should be your greatest growth engine.
+                </p>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Our team of experienced cloud engineers and creative web strategists combine forces to ensure that every website we build or host operates at peak reliability, speed, and visual appeal.
+                </p>
+                <div class="pt-4 flex items-center space-x-6">
+                    <button onclick="toggleConsultation()" class="bg-brandHero hover:bg-brandDark text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition">
+                        Work With Us
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-2xl bg-brandSage/20 border border-brandSage/40 flex items-center justify-center text-brandDark font-black">
+                            100+
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">Enterprise Sites Hosted</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. PRICING SECTION -->
+    <section id="pricing" class="py-24 px-4 sm:px-6 lg:px-8 bg-brandDark text-white relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Transparent Pricing Plans</h2>
+                <p class="text-sm sm:text-base text-brandSage">Simple, predictable hosting & web maintenance tiers with no hidden fees.</p>
+            </div>
+
+            <!-- Pricing Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Personal Plan -->
+                <div class="bg-brandHero border border-brandSage/30 rounded-3xl p-8 flex flex-col justify-between shadow-xl hover:border-brandSage transition duration-300">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">Personal</h3>
+                        <p class="text-xs text-brandSage mb-6">Essential hosting and upkeep for creators and startups.</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-black text-white">$460</span>
+                            <span class="text-xs text-brandSage"> / month</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-brandSage/90 mb-8 border-t border-brandSage/20 pt-6">
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>High-Speed Cloud Hosting</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>1 Active Website Asset</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Daily Backups & Support</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Personal Plan ($460/mo)')" class="w-full bg-brandDark hover:bg-brandSage hover:text-brandDark text-white font-bold py-3.5 rounded-2xl transition border border-brandSage/30">
+                        Select Personal
+                    </button>
+                </div>
+
+                <!-- Business Plan (Featured) -->
+                <div class="bg-gradient-to-b from-brandHero to-brandDark border-2 border-brandSage rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative transform md:-translate-y-4">
+                    <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-brandSage text-brandDark text-xs font-black px-4 py-1 rounded-full uppercase tracking-wider">
+                        Most Popular
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">Business</h3>
+                        <p class="text-xs text-brandSage mb-6">Optimal speed, security, and content support for growing brands.</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-black text-white">$580</span>
+                            <span class="text-xs text-brandSage"> / month</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-white mb-8 border-t border-brandSage/20 pt-6">
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Dedicated Cloud Servers</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Up to 5 Web Assets</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>24/7 Priority Support & SEO</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Business Plan ($580/mo)')" class="w-full bg-brandSage hover:bg-white text-brandDark font-extrabold py-3.5 rounded-2xl transition shadow-lg">
+                        Select Business
+                    </button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-brandHero border border-brandSage/30 rounded-3xl p-8 flex flex-col justify-between shadow-xl hover:border-brandSage transition duration-300">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">Enterprise</h3>
+                        <p class="text-xs text-brandSage mb-6">Custom cloud clusters and tailored content strategy.</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-black text-white">$850</span>
+                            <span class="text-xs text-brandSage"> / month</span>
+                        </div>
+                        <ul class="space-y-4 text-sm text-brandSage/90 mb-8 border-t border-brandSage/20 pt-6">
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Multi-Region Cloud Architecture</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Unlimited Web Assets</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i class="fa-solid fa-check text-brandSage"></i>
+                                <span>Dedicated Support Concierge</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="selectPlan('Enterprise Plan ($850/mo)')" class="w-full bg-brandDark hover:bg-brandSage hover:text-brandDark text-white font-bold py-3.5 rounded-2xl transition border border-brandSage/30">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. WHAT WE VALUE SECTION -->
+    <section class="py-24 px-4 sm:px-6 lg:px-8 bg-brandLight">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-brandDark tracking-tight">What We Value</h2>
+                <p class="text-sm sm:text-base text-slate-600">The core principles guiding every website and server we maintain.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Value 1: Content Creation -->
+                <div class="bg-white p-8 rounded-3xl border border-brandSage/30 shadow-sm space-y-4 hover:shadow-lg transition">
+                    <div class="w-12 h-12 rounded-2xl bg-brandLight text-brandDark flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-pen"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-brandDark">Content Creation</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        High-quality copy and media designed to express your brand clearly and drive engagement.
+                    </p>
+                </div>
+
+                <!-- Value 2: Client Relationships -->
+                <div class="bg-white p-8 rounded-3xl border border-brandSage/30 shadow-sm space-y-4 hover:shadow-lg transition">
+                    <div class="w-12 h-12 rounded-2xl bg-brandLight text-brandDark flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-brandDark">Client Relationships</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Direct communication, transparent updates, and genuine partnerships built for the long haul.
+                    </p>
+                </div>
+
+                <!-- Value 3: Design & Aesthetics -->
+                <div class="bg-white p-8 rounded-3xl border border-brandSage/30 shadow-sm space-y-4 hover:shadow-lg transition">
+                    <div class="w-12 h-12 rounded-2xl bg-brandLight text-brandDark flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-palette"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-brandDark">Design & Aesthetics</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Modern, accessible, and intuitive UI layout principles tuned for seamless user navigation.
+                    </p>
+                </div>
+
+                <!-- Value 4: Continuous Backups -->
+                <div class="bg-white p-8 rounded-3xl border border-brandSage/30 shadow-sm space-y-4 hover:shadow-lg transition">
+                    <div class="w-12 h-12 rounded-2xl bg-brandLight text-brandDark flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-brandDark">Continuous Backups</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Relentless data protection, snapshot integrity, and instant disaster recovery readiness.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. FOOTER -->
+    <footer class="bg-brandDark text-white pt-20 pb-12 px-4 sm:px-6 lg:px-8 border-t border-brandSage/10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+            <!-- Brand Info Column -->
+            <div class="lg:col-span-1 space-y-4">
+                <span class="text-2xl font-black tracking-wider text-white">Hosted Visions</span>
+                <p class="text-xs text-brandSage leading-relaxed">
+                    Delivering premium web development, cloud hosting, and continuous digital support worldwide.
+                </p>
+            </div>
+
+            <!-- Column 1: Resources -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Resources</h4>
+                <ul class="space-y-2 text-xs text-brandSage">
+                    <li><a href="#" class="hover:text-white transition">Documentation</a></li>
+                    <li><a href="#" class="hover:text-white transition">Developer API</a></li>
+                    <li><a href="#" class="hover:text-white transition">Knowledge Base</a></li>
+                    <li><a href="#" class="hover:text-white transition">System Status</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 2: Careers -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Careers</h4>
+                <ul class="space-y-2 text-xs text-brandSage">
+                    <li><a href="#" class="hover:text-white transition">Current Openings</a></li>
+                    <li><a href="#" class="hover:text-white transition">Company Culture</a></li>
+                    <li><a href="#" class="hover:text-white transition">Engineering Team</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Recent Articles -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Recent Articles</h4>
+                <ul class="space-y-3 text-xs text-brandSage">
+                    <li>
+                        <a href="#" class="hover:text-white transition block">Optimizing Cloud Server Latency in 2026</a>
+                        <span class="text-[10px] opacity-70">Oct 20, 2026</span>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:text-white transition block">Modern Web Design Trends</a>
+                        <span class="text-[10px] opacity-70">Oct 12, 2026</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Social Media -->
+            <div class="space-y-4">
+                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Social Media</h4>
+                <p class="text-xs text-brandSage">Follow Hosted Visions for daily technical insights and design news.</p>
+                <div class="flex items-center space-x-3 pt-2">
+                    <a href="#" class="w-10 h-10 rounded-xl bg-brandHero hover:bg-brandSage hover:text-brandDark transition flex items-center justify-center text-brandSage">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-brandHero hover:bg-brandSage hover:text-brandDark transition flex items-center justify-center text-brandSage">
+                        <i class="fa-brands fa-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-brandHero hover:bg-brandSage hover:text-brandDark transition flex items-center justify-center text-brandSage">
+                        <i class="fa-brands fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright Bar -->
+        <div class="max-w-7xl mx-auto pt-8 border-t border-brandSage/10 flex flex-col sm:flex-row items-center justify-between text-xs text-brandSage/70">
+            <p>&copy; 2026 Hosted Visions. All rights reserved.</p>
+            <div class="flex space-x-6 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+                <a href="#" class="hover:text-white transition">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Controls -->
+    <script>
+        // Toast Manager
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toast-message');
+            msg.textContent = message;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 3000);
+        }
+
+        // Mobile Nav Drawer Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            menu.classList.toggle('hidden');
+            if(menu.classList.contains('hidden')) {
+                icon.className = 'fa-solid fa-bars';
+            } else {
+                icon.className = 'fa-solid fa-xmark';
+            }
+        }
+
+        // Search Modal Toggle
+        function toggleSearch() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+            if(!modal.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        function quickSearch(term) {
+            document.getElementById('search-input').value = term;
+            showToast('Filtering for: ' + term);
+            setTimeout(() => { toggleSearch(); }, 600);
+        }
+
+        // Consultation Modal Toggle
+        function toggleConsultation() {
+            const modal = document.getElementById('consultation-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function handleConsultationSubmit(event) {
+            event.preventDefault();
+            toggleConsultation();
+            showToast('Consultation request received! We will be in touch shortly.');
+        }
+
+        // Select Pricing Plan Action
+        function selectPlan(planName) {
+            showToast('Selected ' + planName + '. Redirecting to checkout...');
+        }
+
+        // Close Modals on ESC Key
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') {
+                document.getElementById('search-modal').classList.add('hidden');
+                document.getElementById('search-modal').classList.remove('flex');
+                document.getElementById('consultation-modal').classList.add('hidden');
+                document.getElementById('consultation-modal').classList.remove('flex');
+            }
+        });
+    </script>
+</body>
+</html>
